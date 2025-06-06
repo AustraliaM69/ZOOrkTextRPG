@@ -1,4 +1,4 @@
 "A:\CLion 2024.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=A:/CLion 2024.3.4/bin/ninja/win/x64/ninja.exe" -G Ninja -S C:\Users\Samuel\Desktop\Uni\zoork\ZOOrk-20250525\ZOOrk -B C:\Users\Samuel\Desktop\Uni\zoork\ZOOrk-20250525\ZOOrk\cmake-build-debug
--- Configuring done (0.2s)
+-- Configuring done (5.0s)
 -- Generating done (0.1s)
 -- Build files have been written to: C:/Users/Samuel/Desktop/Uni/zoork/ZOOrk-20250525/ZOOrk/cmake-build-debug

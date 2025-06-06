@@ -40,7 +40,7 @@ void ZOOrkEngine::run() {
         }else if (command == "scan") {
             handleScanCommand();
         }else if (command == "help") {
-            std::cout << "-----HELP-----\n Below are the following commands.\n\nGo\nLook\nTake\nDrop\nInventory\nScan\nQuit\n\n Please note: Use commands without filler words. For example - Look North, Take Sword, Go West\n Use the LOOK tool to see which direction to go.\n Use the SCAN command to see all available items.\n\n";
+            std::cout << "-----HELP-----\n Below are the following commands.\n\nGo\nLook\nTake\nDrop\nInventory\nScan\nAttack\nEquip\nUnequip\nTalk\nQuit\n\n Please note: Use commands without filler words. For example - Look North, Take Sword, Go West\n Use the LOOK tool to see which direction to go.\n Use the SCAN command to see all available items.\n\n";
         }else if (command == "attack") {
             handleAttackCommand(arguments);
         }else if (command == "equip") {
@@ -204,8 +204,10 @@ void ZOOrkEngine::handleAttackCommand(std::vector<std::string> arguments) {
     enemy->takeDamage(playerDamage);
 
     if (enemy->getHP() <= 0) {
-        std::cout << "You have defeated the " << target << "!\n";
+        int enemyReward = enemy->getReward();
+        std::cout << "You have defeated the " << target << "!\n You have earned " << enemyReward<< " gold!\n";
         currentRoom->removeEnemy(target);
+        player->addGold(enemyReward);
         return;
     }
 

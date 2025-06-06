@@ -42,6 +42,17 @@ public:
         return inventory;
     }
 
+    //Gold
+    int getGold()const {return gold;}
+    void setGold(int amount){gold = amount;}
+    void addGold(int amount){gold += amount;}
+    bool spendGold(int amount) {
+        if (gold >= amount) {
+            gold -= amount;
+            return true;
+        }else{return false;}
+    }
+
     void equip(const std::shared_ptr<Weapon>& weapon);
     void unequip();
     std::shared_ptr<Weapon> getEquippedWeapon() const;
@@ -50,6 +61,7 @@ public:
 
 private:
     int health = 100;
+    int gold = 0;
     std::shared_ptr<Weapon> equippedWeapon = nullptr;
     std::vector<std::shared_ptr<Item>> inventory;
     static Player *playerInstance;

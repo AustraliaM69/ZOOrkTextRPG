@@ -42,6 +42,8 @@ std::shared_ptr<Item> Player::getItem(const std::string& name) {
 }
 
 void Player::listInventory() const {
+    std::cout << "You have " << gold << " gold" << std::endl;
+
     if (inventory.empty()) {
         std::cout << "You are carrying nothing.\n";
     } else {

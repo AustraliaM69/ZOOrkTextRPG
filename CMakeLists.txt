@@ -11,4 +11,5 @@ add_executable(ZOOrk main.cpp Item.h Command.h Item.cpp Character.cpp Character.
         NPC.cpp
         NPC.h
         DialogueNode.cpp
-        DialogueNode.h)
+        DialogueNode.h
+)

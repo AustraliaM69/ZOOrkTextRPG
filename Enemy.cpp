@@ -2,8 +2,8 @@
 #include "Player.h"
 #include <iostream>
 
-Enemy::Enemy(const std::string &name, const std::string &desc, int hp, int attack)
-        : Character(name, desc), health(hp), attackPower(attack) {}
+Enemy::Enemy(const std::string &name, const std::string &desc, int hp, int attack,int goldReward)
+        : Character(name, desc), health(hp), attackPower(attack),goldReward(goldReward) {}
 
 bool Enemy::isAlive() const {
     return health > 0;
@@ -30,4 +30,8 @@ int Enemy::getAttackPower() const {
 void Enemy::attack(Player *player) {
     std::cout << name << " attacks you for " << attackPower << " damage!\n";
     player->takeDamage(attackPower);
+}
+
+int Enemy::getReward() const {
+    return goldReward;
 }

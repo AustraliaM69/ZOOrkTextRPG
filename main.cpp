@@ -1,3 +1,4 @@
+
 #include "RoomDefaultEnterCommand.h"
 #include "Passage.h"
 #include "Player.h"
@@ -63,11 +64,23 @@ int main() {
     stable->addNPC(oldMan);
     auto sword = new Weapon("sword", "A gleaming silver sword with runes.",5);
     auto apple = new Item("apple", "A crisp red apple.");
-    auto goblin = std::make_shared<Enemy>("goblin", "A sneaky goblin lurks here.", 10, 2);
+    auto goblin = std::make_shared<Enemy>("goblin", "A sneaky goblin lurks here.", 10, 2,10);
     forestPath->addEnemy(goblin);
 
     stable->addItem(std::shared_ptr<Item>(sword));
     caveEntrance->addItem(std::shared_ptr<Item>(apple));
+
+
+
+    std::cout << R"(
+ _____           _                __       _ _    ___                  _
+| ____|_ __ ___ | |__   ___ _ __ / _| __ _| | |  / _ \ _   _  ___  ___| |_
+|  _| | '_ ` _ \| '_ \ / _ \ '__| |_ / _` | | | | | | | | | |/ _ \/ __| __|
+| |___| | | | | | |_) |  __/ |  |  _| (_| | | | | |_| | |_| |  __/\__ \ |_
+|_____|_| |_| |_|_.__/ \___|_|  |_|  \__,_|_|_|  \__\_\\__,_|\___||___/\__|
+
+)" << "\n";
+
 
     ZOOrkEngine zoork(stable);
 
