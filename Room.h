@@ -24,8 +24,9 @@ public:
     Room(const std::string &, const std::string &, std::shared_ptr<Command>);
 
     void addItem(std::shared_ptr<Item> item);
-    bool removeItem(const std::string&);
-    std::shared_ptr<Item> retrieveItem(const std::string&);
+    void removeItem(const std::string& name);
+    std::shared_ptr<Item> retrieveItem(const std::string& name);
+    const std::vector<std::shared_ptr<Item>>& getItems() const { return items; }
 
     //NPC
     void addNPC(std::shared_ptr<NPC> npc);
@@ -37,9 +38,6 @@ public:
 
     std::shared_ptr<Passage> getPassage(const std::string &, bool warnIfMissing = true);
 
-    std::vector<std::shared_ptr<Item>> getItems() const {
-        return items;
-    }
     void addEnemy(std::shared_ptr<Enemy> enemy);
     std::shared_ptr<Enemy> getEnemy(const std::string& name);
     void removeEnemy(const std::string& name);

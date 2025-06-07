@@ -45,6 +45,8 @@ private:
     void handleEquipCommand(std::vector<std::string> arguments);
 
     void handleTalkCommand(const std::vector<std::string> &arguments);
+
+    void handleUseCommand(const std::vector<std::string> &arguments);
 };
 
 

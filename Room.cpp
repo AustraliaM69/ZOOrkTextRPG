@@ -40,30 +40,50 @@ void Room::addItem(std::shared_ptr<Item> item) {
 }
 
 std::shared_ptr<Item> Room::retrieveItem(const std::string& name) {
-    for (const std::shared_ptr<Item>& itemPtr : items) {
-        if (itemPtr->getName() == name) return itemPtr;
+    auto it = std::find_if(items.begin(), items.end(),
+                          [&name](const std::shared_ptr<Item>& item) {
+                              std::string itemName = item->getName();
+                              std::string searchName = name;
+                              std::transform(itemName.begin(), itemName.end(), itemName.begin(), ::tolower);
+                              std::transform(searchName.begin(), searchName.end(), searchName.begin(), ::tolower);
+                              return itemName == searchName;
+                          });
+    if (it != items.end()) {
+        std::shared_ptr<Item> item = *it;
+        items.erase(it);
+        return item;
     }
     return nullptr;
 }
 
-bool Room::removeItem(const std::string &name) {
+void Room::removeItem(const std::string& name) {
     auto it = std::find_if(items.begin(), items.end(),
-                           [&](const std::shared_ptr<Item>& i) { return i->getName() == name; });
+                          [&name](const std::shared_ptr<Item>& item) {
+                              std::string itemName = item->getName();
+                              std::string searchName = name;
+                              std::transform(itemName.begin(), itemName.end(), itemName.begin(), ::tolower);
+                              std::transform(searchName.begin(), searchName.end(), searchName.begin(), ::tolower);
+                              return itemName == searchName;
+                          });
     if (it != items.end()) {
         items.erase(it);
-        return true;
     }
-    return false;
 }
 void Room::addEnemy(std::shared_ptr<Enemy> enemy) {
     enemies.push_back(enemy);
 }
 
 std::shared_ptr<Enemy> Room::getEnemy(const std::string& name) {
-    for (auto& enemy : enemies) {
-        if (enemy->getName() == name) {
-            return enemy;
-        }
+    auto it = std::find_if(enemies.begin(), enemies.end(),
+                          [&name](const std::shared_ptr<Enemy>& enemy) {
+                              std::string enemyName = enemy->getName();
+                              std::string searchName = name;
+                              std::transform(enemyName.begin(), enemyName.end(), enemyName.begin(), ::tolower);
+                              std::transform(searchName.begin(), searchName.end(), searchName.begin(), ::tolower);
+                              return enemyName == searchName;
+                          });
+    if (it != enemies.end()) {
+        return *it;
     }
     return nullptr;
 }

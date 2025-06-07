@@ -15,7 +15,13 @@ class Item : public GameObject {
 public:
     Item(const std::string &, const std::string &);
 
+    Item(const std::string &n, const std::string &d, int p);
+
     Item(const std::string &, const std::string &, std::shared_ptr<Command>);
+
+    int getPrice()const{return price;}
+    std::string getName()const{return name;}
+
 
     virtual void use();
 
@@ -23,6 +29,7 @@ public:
 
 protected:
     std::shared_ptr<Command> useCommand;
+    int price;
 };
 
 #endif //ZOORK_ITEM_H

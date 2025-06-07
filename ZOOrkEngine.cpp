@@ -22,8 +22,17 @@ void ZOOrkEngine::run() {
 
         std::string input;
         std::getline(std::cin, input);
+        
+        // Skip empty input
+        if (input.empty()) {
+            continue;
+        }
 
         std::vector<std::string> words = tokenizeString(input);
+        if (words.empty()) {
+            continue;
+        }
+
         std::string command = words[0];
         std::vector<std::string> arguments(words.begin() + 1, words.end());
 
@@ -35,30 +44,48 @@ void ZOOrkEngine::run() {
             handleTakeCommand(arguments);
         } else if (command == "drop") {
             handleDropCommand(arguments);
-        }else if (command == "inventory") {
+        } else if (command == "inventory") {
             player->listInventory();
-        }else if (command == "scan") {
+        } else if (command == "scan") {
             handleScanCommand();
-        }else if (command == "help") {
-            std::cout << "-----HELP-----\n Below are the following commands.\n\nGo\nLook\nTake\nDrop\nInventory\nScan\nAttack\nEquip\nUnequip\nTalk\nQuit\n\n Please note: Use commands without filler words. For example - Look North, Take Sword, Go West\n Use the LOOK tool to see which direction to go.\n Use the SCAN command to see all available items.\n\n";
-        }else if (command == "attack") {
+        } else if (command == "help") {
+            std::cout << "-----HELP-----\n Below are the following commands.\n\nGo\nLook\nTake\nDrop\nInventory\nScan\nAttack\nEquip\nUnequip\nTalk\nUse\nQuit\n\n Please note: Use commands without filler words. For example - Look North, Take Sword, Go West\n Use the LOOK tool to see which direction to go.\n Use the SCAN command to see all available items.\n\n";
+        } else if (command == "attack") {
             handleAttackCommand(arguments);
-        }else if (command == "equip") {
+        } else if (command == "equip") {
             handleEquipCommand(arguments);
-        }else if (command == "unequip") {
+        } else if (command == "unequip") {
             player->unequip();
             std::cout << "You unequip your weapon.\n";
-        }else if (command == "talk") {
+        } else if (command == "talk") {
             handleTalkCommand(arguments);
-        }else if (command == "quit") {
+        } else if (command == "use") {
+            handleUseCommand(arguments);
+        } else if (command == "quit") {
             handleQuitCommand(arguments);
         } else {
             std::cout << "I don't understand that command.\n";
+        }
+
+        // Check if any NPC in the current room has completed their quest
+        for (const auto& npc : player->getCurrentRoom()->getNPCs()) {
+            if (npc->shouldEndGame()) {
+                std::cout << "\nCongratulations! You have completed the quest!\n";
+                std::cout << "The ancient artifact has been returned to its rightful place.\n";
+                std::cout << "Thank you for playing!\n\n";
+                gameOver = true;
+                break;
+            }
         }
     }
 }
 
 void ZOOrkEngine::handleGoCommand(std::vector<std::string> arguments) {
+    if (arguments.empty()) {
+        std::cout << "Go where?\n";
+        return;
+    }
+
     std::string direction;
     if (arguments[0] == "n" || arguments[0] == "north") {
         direction = "north";
@@ -127,7 +154,13 @@ void ZOOrkEngine::handleTakeCommand(std::vector<std::string> arguments) {
         return;
     }
 
-    std::string itemName = arguments[0];
+    // Join all arguments to handle multi-word item names
+    std::string itemName;
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        if (i > 0) itemName += " ";
+        itemName += arguments[i];
+    }
+
     Room* currentRoom = player->getCurrentRoom();
     std::shared_ptr<Item> item = currentRoom->retrieveItem(itemName);
 
@@ -146,7 +179,13 @@ void ZOOrkEngine::handleDropCommand(std::vector<std::string> arguments) {
         return;
     }
 
-    std::string itemName = arguments[0];
+    // Join all arguments to handle multi-word item names
+    std::string itemName;
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        if (i > 0) itemName += " ";
+        itemName += arguments[i];
+    }
+
     std::shared_ptr<Item> item = player->getItem(itemName);
 
     if (item) {
@@ -154,7 +193,7 @@ void ZOOrkEngine::handleDropCommand(std::vector<std::string> arguments) {
         player->getCurrentRoom()->addItem(item);
         std::cout << "You drop the " << itemName << ".\n";
     } else {
-        std::cout << "You don’t have a " << itemName << ".\n";
+        std::cout << "You don't have a " << itemName << ".\n";
     }
 }
 
@@ -188,7 +227,13 @@ void ZOOrkEngine::handleAttackCommand(std::vector<std::string> arguments) {
         return;
     }
 
-    std::string target = arguments[0];
+    // Join all arguments to handle multi-word enemy names
+    std::string target;
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        if (i > 0) target += " ";
+        target += arguments[i];
+    }
+
     Room* currentRoom = player->getCurrentRoom();
     std::shared_ptr<Enemy> enemy = currentRoom->getEnemy(target);
 
@@ -246,28 +291,25 @@ void ZOOrkEngine::handleEquipCommand(std::vector<std::string> arguments) {
         return;
     }
 
-    std::string weaponName = arguments[0];
-    auto playerInventory = player->getInventory();
-
-    // Find weapon in inventory by name
-    std::shared_ptr<Weapon> weaponToEquip = nullptr;
-    for (auto &item : playerInventory) {
-        if (item->getName() == weaponName) {
-            weaponToEquip = std::dynamic_pointer_cast<Weapon>(item);
-            if (!weaponToEquip) {
-                std::cout << "You can't equip that!\n";
-                return;
-            }
-            break;
-        }
+    // Join all arguments to handle multi-word item names
+    std::string itemName;
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        if (i > 0) itemName += " ";
+        itemName += arguments[i];
     }
 
-    if (!weaponToEquip) {
+    std::shared_ptr<Item> item = player->getItem(itemName);
+    if (!item) {
         std::cout << "You don't have that weapon.\n";
         return;
     }
 
-    player->equip(weaponToEquip);
+    auto weapon = std::dynamic_pointer_cast<Weapon>(item);
+    if (weapon) {
+        player->equip(weapon);
+    } else {
+        std::cout << "That's not a weapon.\n";
+    }
 }
 void ZOOrkEngine::handleTalkCommand(const std::vector<std::string>& arguments) {
     if (arguments.empty()) {
@@ -280,11 +322,34 @@ void ZOOrkEngine::handleTalkCommand(const std::vector<std::string>& arguments) {
     auto npcs = currentRoom->getNPCs();
 
     for (const auto& npc : npcs) {
-        if (npc->getName() == npcName) {
-            npc->startDialogue();
+        if (makeLowercase(npc->getName()) == npcName) {
+            npc->startDialogue(player);
             return;
         }
     }
 
     std::cout << "There's no one named " << npcName << " here.\n";
+}
+
+void ZOOrkEngine::handleUseCommand(const std::vector<std::string>& arguments) {
+    if (arguments.empty()) {
+        std::cout << "Use what?\n";
+        return;
+    }
+
+    // Join all arguments to handle multi-word item names
+    std::string itemName;
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        if (i > 0) itemName += " ";
+        itemName += arguments[i];
+    }
+
+    std::shared_ptr<Item> item = player->getItem(itemName);
+    if (!item) {
+        std::cout << "You don't have a " << itemName << ".\n";
+        return;
+    }
+
+    item->use();
+    player->removeItem(itemName);
 }

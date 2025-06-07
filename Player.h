@@ -32,11 +32,14 @@ public:
     //Combat Functions
     void takeDamage(int damage);
     int getHealth() const;
+    void heal(int amount);
 
     //Inventory functions
     void addItem(std::shared_ptr<Item> item);
     bool removeItem(const std::string& name);
     std::shared_ptr<Item> getItem(const std::string& name);
+    bool hasItem(const std::string& name) const;
+    std::shared_ptr<Item> getItemExact(const std::string& name);
     void listInventory() const;
     std::vector<std::shared_ptr<Item>>& getInventory() {
         return inventory;

@@ -12,4 +12,8 @@ add_executable(ZOOrk main.cpp Item.h Command.h Item.cpp Character.cpp Character.
         NPC.h
         DialogueNode.cpp
         DialogueNode.h
+        HealthPotion.cpp
+        HealthPotion.h
+        QuestItem.cpp
+        QuestItem.h
 )

@@ -24,9 +24,13 @@ void Player::addItem(std::shared_ptr<Item> item) {
 
 bool Player::removeItem(const std::string& name) {
     auto it = std::find_if(inventory.begin(), inventory.end(),
-                           [&](const std::shared_ptr<Item>& i) {
-                               return i->getName() == name;
-                           });
+                          [&name](const std::shared_ptr<Item>& item) {
+                              std::string itemName = item->getName();
+                              std::string searchName = name;
+                              std::transform(itemName.begin(), itemName.end(), itemName.begin(), ::tolower);
+                              std::transform(searchName.begin(), searchName.end(), searchName.begin(), ::tolower);
+                              return itemName == searchName;
+                          });
     if (it != inventory.end()) {
         inventory.erase(it);
         return true;
@@ -34,9 +38,11 @@ bool Player::removeItem(const std::string& name) {
     return false;
 }
 
-std::shared_ptr<Item> Player::getItem(const std::string& name) {
-    for (const auto& item : inventory) {
-        if (item->getName() == name) return item;
+std::shared_ptr<Item> Player::getItemExact(const std::string& name) {
+    for (auto& item : inventory) {
+        if (item->getName() == name) {
+            return item;
+        }
     }
     return nullptr;
 }
@@ -85,4 +91,34 @@ void Player::takeDamage(int dmg) {
 
 int Player::getHealth() const {
     return health;
+}
+
+void Player::heal(int amount) {
+    health = std::min(health + amount, 100);  // Cap at 100 health
+}
+
+bool Player::hasItem(const std::string& name) const {
+    for (const auto& item : inventory) {
+        std::string itemName = item->getName();
+        std::string searchName = name;
+        std::transform(itemName.begin(), itemName.end(), itemName.begin(), ::tolower);
+        std::transform(searchName.begin(), searchName.end(), searchName.begin(), ::tolower);
+        if (itemName == searchName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::shared_ptr<Item> Player::getItem(const std::string& name) {
+    for (auto& item : inventory) {
+        std::string itemName = item->getName();
+        std::string searchName = name;
+        std::transform(itemName.begin(), itemName.end(), itemName.begin(), ::tolower);
+        std::transform(searchName.begin(), searchName.end(), searchName.begin(), ::tolower);
+        if (itemName == searchName) {
+            return item;
+        }
+    }
+    return nullptr;
 }
